@@ -1,0 +1,7 @@
+sample,fastq_1,fastq_2,condition
+SRR40794928,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794928_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794928_2.fastq.gz,negative_control
+SRR40794929,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794929_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794929_2.fastq.gz,negative_control
+SRR40794930,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794930_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794930_2.fastq.gz,negative_control
+SRR40794931,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794931_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794931_2.fastq.gz,miR150_inhibition
+SRR40794932,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794932_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794932_2.fastq.gz,miR150_inhibition
+SRR40794933,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794933_1.fastq.gz,/home/carmenmapor/rnaseq_pipeline/data/fastq/SRR40794933_2.fastq.gz,miR150_inhibition

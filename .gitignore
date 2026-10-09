@@ -1,0 +1,22 @@
+# Nextflow work and log files
+.nextflow/
+.nextflow.log*
+work/
+
+# Conda environment directories
+conda/
+.conda/
+
+# Large binary / genomics data
+genome/
+data/fastq/*.fastq.gz
+data/tmp/
+
+# Intermediate alignment files
+results/hisat2/*/*.bam
+results/hisat2/*/*.bai
+results/trimmomatic/*/*.fastq.gz
+
+# OS metadata
+.DS_Store
+Thumbs.db
