@@ -1,22 +1,27 @@
-# Nextflow work and log files
+# Nextflow temporales y logs de ejecución
 .nextflow/
 .nextflow.log*
 work/
 
-# Conda environment directories
+# Entornos Conda locales
 conda/
 .conda/
 
-# Large binary / genomics data
+# Genoma de referencia y FASTQs crudos (se regeneran o descargan, pesan gigabytes)
 genome/
 data/fastq/*.fastq.gz
 data/tmp/
 
-# Intermediate alignment files
+# Archivos intermedios pesados de alineamiento y recortado (GitHub limita a 100MB por archivo)
+*.bam
+*.bai
 results/hisat2/*/*.bam
 results/hisat2/*/*.bai
 results/trimmomatic/*/*.fastq.gz
 
-# OS metadata
+# Archivos de Word / temporales de Office
+~$*.docx
+
+# Metadatos del sistema operativo
 .DS_Store
 Thumbs.db
