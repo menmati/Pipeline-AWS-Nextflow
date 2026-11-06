@@ -19,6 +19,7 @@ include { FEATURECOUNTS } from './modules/featurecounts'
 include { DESEQ2        } from './modules/deseq2'
 
 // ── Parameter defaults ──────────────────────────────────
+params.help                 = false
 params.samplesheet          = "${projectDir}/data/samplesheet.csv"
 params.genome               = "${projectDir}/genome/genome.fa"
 params.gtf                  = "${projectDir}/genome/annotation.gtf"
@@ -28,6 +29,29 @@ params.trimmomatic_adapters = "${projectDir}/assets/TruSeq3-PE-2.fa"
 params.outdir               = "${projectDir}/results"
 params.contrast             = ["condition", "miR150_inhibition", "negative_control"]
 params.r_script             = "${projectDir}/scripts/deseq2_analysis.R"
+
+// ── Help message ─────────────────────────────────────────
+if (params.help) {
+    log.info """
+    ============================================================
+     RNA-seq Pipeline – miR-150-5p Inhibition in Mouse Cortex
+    ============================================================
+     Usage:
+       nextflow run main.nf [options]
+
+     Input / Output Options:
+       --samplesheet          Path to samplesheet CSV [default: ${params.samplesheet}]
+       --outdir               Output directory [default: ${params.outdir}]
+       --help                 Show this help message and exit
+
+     Profiles:
+       -profile local         Local execution with Conda (default)
+       -profile docker        Containerized execution with Docker
+       -profile aws           Cloud execution with AWS Batch + S3
+    ============================================================
+    """.stripIndent()
+    exit 0
+}
 
 // ── Workflow ─────────────────────────────────────────────
 workflow {

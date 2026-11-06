@@ -1,6 +1,7 @@
 # Pipeline de Análisis Transcriptómico RNA-Seq con Nextflow DSL2 y Despliegue en AWS Cloud
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A524.04-23aa62.svg?logo=nextflow&logoColor=white)](https://www.nextflow.io/)
+[![Nextflow Pipeline Validation](https://github.com/menmati/Pipeline-AWS-Nextflow/actions/workflows/nextflow-validation.yml/badge.svg)](https://github.com/menmati/Pipeline-AWS-Nextflow/actions/workflows/nextflow-validation.yml)
 [![Language-Bash](https://img.shields.io/badge/language-Bash-4EAA25.svg?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![Language-R](https://img.shields.io/badge/language-R_4.4-276DC3.svg?logo=r&logoColor=white)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
