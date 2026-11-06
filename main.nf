@@ -30,31 +30,31 @@ params.outdir               = "${projectDir}/results"
 params.contrast             = ["condition", "miR150_inhibition", "negative_control"]
 params.r_script             = "${projectDir}/scripts/deseq2_analysis.R"
 
-// ── Help message ─────────────────────────────────────────
-if (params.help) {
-    log.info """
-    ============================================================
-     RNA-seq Pipeline – miR-150-5p Inhibition in Mouse Cortex
-    ============================================================
-     Usage:
-       nextflow run main.nf [options]
-
-     Input / Output Options:
-       --samplesheet          Path to samplesheet CSV [default: ${params.samplesheet}]
-       --outdir               Output directory [default: ${params.outdir}]
-       --help                 Show this help message and exit
-
-     Profiles:
-       -profile local         Local execution with Conda (default)
-       -profile docker        Containerized execution with Docker
-       -profile aws           Cloud execution with AWS Batch + S3
-    ============================================================
-    """.stripIndent()
-    exit 0
-}
-
 // ── Workflow ─────────────────────────────────────────────
 workflow {
+
+    // Help message
+    if (params.help) {
+        log.info """
+        ============================================================
+         RNA-seq Pipeline – miR-150-5p Inhibition in Mouse Cortex
+        ============================================================
+         Usage:
+           nextflow run main.nf [options]
+
+         Input / Output Options:
+           --samplesheet          Path to samplesheet CSV [default: ${params.samplesheet}]
+           --outdir               Output directory [default: ${params.outdir}]
+           --help                 Show this help message and exit
+
+         Profiles:
+           -profile local         Local execution with Conda (default)
+           -profile docker        Containerized execution with Docker
+           -profile aws           Cloud execution with AWS Batch + S3
+        ============================================================
+        """.stripIndent()
+        exit 0
+    }
 
     // 1. Parse samplesheet → channel of [meta, [r1, r2]]
     Channel
