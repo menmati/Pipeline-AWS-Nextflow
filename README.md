@@ -138,22 +138,28 @@ Pipeline-AWS-Nextflow/
 ├── nextflow.config                 # Archivo de configuración maestro (parámetros, recursos y perfiles de ejecución)
 ├── environment.yml                 # Especificación del entorno Conda (FastQC, Trimmomatic, HISAT2, Subread, R/Bioconductor)
 ├── .gitignore                      # Reglas de exclusión de Git (excluye genoma crudo de 4GB y BAMs de >100MB)
-├── TruSeq3-PE-2.fa                 # Secuencias FASTA de adaptadores Illumina TruSeq para recorte por Trimmomatic
-├── SRR_Acc_List.txt                # Identificadores de acceso SRA analizados
-├── SraRunTable.csv                 # Metadatos experimentales descargados de NCBI SRA
+├── LICENSE                         # Licencia de código abierto MIT
+├── environment.yml                 # Definición de dependencias y canales de Conda
+├── main.nf                         # Orquestador del pipeline en Nextflow DSL2
+├── nextflow.config                 # Perfiles de ejecución (local, docker, awsbatch)
 │
-├── modules/                        # Procesos aislados y modulares de Nextflow
-│   ├── fastqc.nf                   # Módulo de control de calidad; genera métricas de distribución de calidad Phred y GC
-│   ├── trimmomatic.nf              # Módulo de recorte por ventana deslizante y eliminación de adaptadores Illumina
-│   ├── hisat2.nf                   # Módulo de alineamiento guiado por empalmes acoplado a SAMtools (BAM ordenado + índice BAI)
-│   ├── featurecounts.nf            # Módulo de cuantificación reversa por pares de lecturas a nivel de exón/gen
+├── assets/                         # Archivos estáticos y de configuración de herramientas
+│   └── TruSeq3-PE-2.fa             # Secuencias FASTA de adaptadores Illumina TruSeq para Trimmomatic
+│
+├── modules/                        # Procesos aislados y modulares de Nextflow DSL2
+│   ├── fastqc.nf                   # Módulo de control de calidad (Phred scores y %GC)
+│   ├── trimmomatic.nf              # Módulo de recorte por ventana deslizante y adaptadores
+│   ├── hisat2.nf                   # Módulo de alineamiento guiado por empalmes (HISAT2 + SAMtools)
+│   ├── featurecounts.nf            # Módulo de cuantificación reversa por pares a nivel de gen
 │   └── deseq2.nf                   # Envoltorio del proceso de análisis estadístico en R
 │
-├── scripts/
-│   └── deseq2_analysis.R           # Script estadístico en R: normalización, VST, PCA, apeglm shrinkage y Volcano plot
+├── scripts/                        # Scripts analíticos complementarios
+│   └── deseq2_analysis.R           # Script en R: normalización, VST, PCA, apeglm y Volcano plot
 │
-├── data/
-│   └── samplesheet.csv             # Manifiesto estructurado (sample_id, fastq_1, fastq_2, condition)
+├── data/                           # Datos de entrada y metadatos del estudio
+│   ├── samplesheet.csv             # Manifiesto de muestras (sample_id, fastq_1, fastq_2, condition)
+│   ├── SRR_Acc_List.txt            # Identificadores de acceso SRA analizados (BioProject PRJNA1533324)
+│   └── SraRunTable.csv             # Metadatos experimentales descargados de NCBI SRA
 │
 └── results/                        # Entregables analíticos generados por el pipeline
     ├── deseq2/
