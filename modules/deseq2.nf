@@ -6,7 +6,7 @@ process DESEQ2 {
     label 'process_medium'
 
     conda 'conda-forge::r-base=4.4.1 bioconda::bioconductor-deseq2=1.46.0 bioconda::bioconductor-apeglm conda-forge::r-ggplot2 conda-forge::r-ggrepel conda-forge::r-pheatmap conda-forge::r-rcolorbrewer conda-forge::r-optparse'
-    container 'ghcr.io/rocker-project/rocker/verse:4.4.1'
+    // No fixed container: with -profile docker/aws, Wave builds one from the conda directive above
 
     publishDir "${params.outdir}/deseq2", mode: 'copy'
 

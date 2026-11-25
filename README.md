@@ -1,14 +1,14 @@
-# Pipeline de Análisis Transcriptómico RNA-Seq con Nextflow DSL2 y Despliegue en AWS Cloud
+# Pipeline de Análisis Transcriptómico RNA-Seq con Nextflow DSL2 (preparado para AWS Batch)
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A524.04-23aa62.svg?logo=nextflow&logoColor=white)](https://www.nextflow.io/)
 [![Nextflow Pipeline Validation](https://github.com/menmati/Pipeline-AWS-Nextflow/actions/workflows/nextflow-validation.yml/badge.svg)](https://github.com/menmati/Pipeline-AWS-Nextflow/actions/workflows/nextflow-validation.yml)
 [![Language-Bash](https://img.shields.io/badge/language-Bash-4EAA25.svg?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![Language-R](https://img.shields.io/badge/language-R_4.4-276DC3.svg?logo=r&logoColor=white)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status: Complete](https://img.shields.io/badge/Status-100%25_Executed-brightgreen.svg)]()
+[![Status: Executed locally](https://img.shields.io/badge/Status-Executed_locally-brightgreen.svg)]()
 
 > **Bioinformática Traslacional & Cloud Computing:**  
-> Implementación reproducible, modular y automatizada de un pipeline de RNA-Seq de extremo a extremo: adquisición de datos crudos (SRA), control de calidad (FastQC), filtrado y recorte de adaptadores (Trimmomatic), alineamiento guiado por empalmes (HISAT2), cuantificación génica (featureCounts) y análisis de expresión génica diferencial (DESeq2). El workflow está desarrollado bajo **Nextflow DSL2** y desacoplado arquitecturalmente para su orquestación híbrida (local vía Conda/Docker y elástica en **AWS Batch + Amazon S3**).
+> Implementación reproducible, modular y automatizada de un pipeline de RNA-Seq de extremo a extremo: adquisición de datos crudos (SRA), control de calidad (FastQC), filtrado y recorte de adaptadores (Trimmomatic), alineamiento guiado por empalmes (HISAT2), cuantificación génica (featureCounts) y análisis de expresión génica diferencial (DESeq2). El workflow está desarrollado bajo **Nextflow DSL2** y se ha ejecutado completo en local (Conda, WSL2). Incluye además un perfil de ejecución preparado para **AWS Batch + Amazon S3**, que todavía no se ha lanzado en la nube.
 
 ---
 
@@ -20,7 +20,7 @@
 5. [Estructura del Repositorio y Descripción de Componentes](#-estructura-del-repositorio-y-descripcin-de-componentes)
 6. [Resultados Bioestadísticos y Métricas Analíticas](#-resultados-bioestadsticos-y-mtricas-analticas)
 7. [Guía de Ejecución Local (Conda / Docker)](#-gua-de-ejecucin-local-conda--docker)
-8. [Orquestación y Despliegue en AWS Cloud (AWS Batch + S3)](#-orquestacin-y-despliegue-en-aws-cloud-aws-batch--s3)
+8. [Orquestación en AWS Cloud (AWS Batch + S3): perfil preparado](#-orquestación-en-aws-cloud-aws-batch--s3-perfil-preparado)
 9. [Aplicaciones en la Práctica Biomédica](#-aplicaciones-en-la-prctica-biomdica)
 
 ---
@@ -55,7 +55,7 @@ Evaluar los cambios transcriptómicos en la corteza cerebral derivados de la per
 
 El conjunto crudo de lecturas de secuenciación supera los **70 GB** en formato no comprimido. En entornos computacionales restringidos, descargar simultáneamente todos los archivos colapsaría el almacenamiento antes de iniciar el procesamiento.
 
-Para solventar esta limitación física de almacenamiento sin comprometer la integridad analítica, se desarrolló una estrategia de **adquisición y submuestreo secuencial en bucle cerrado** (`download_and_subsample.sh`):
+Para solventar esta limitación física de almacenamiento sin comprometer la integridad analítica, se desarrolló una estrategia de **adquisición y submuestreo secuencial en bucle cerrado** ([`scripts/download_and_subsample.sh`](scripts/download_and_subsample.sh)):
 
 ```mermaid
 flowchart LR
@@ -140,9 +140,6 @@ Pipeline-AWS-Nextflow/
 ├── environment.yml                 # Especificación del entorno Conda (FastQC, Trimmomatic, HISAT2, Subread, R/Bioconductor)
 ├── .gitignore                      # Reglas de exclusión de Git (excluye genoma crudo de 4GB y BAMs de >100MB)
 ├── LICENSE                         # Licencia de código abierto MIT
-├── environment.yml                 # Definición de dependencias y canales de Conda
-├── main.nf                         # Orquestador del pipeline en Nextflow DSL2
-├── nextflow.config                 # Perfiles de ejecución (local, docker, awsbatch)
 │
 ├── assets/                         # Archivos estáticos y de configuración de herramientas
 │   └── TruSeq3-PE-2.fa             # Secuencias FASTA de adaptadores Illumina TruSeq para Trimmomatic
@@ -155,10 +152,11 @@ Pipeline-AWS-Nextflow/
 │   └── deseq2.nf                   # Envoltorio del proceso de análisis estadístico en R
 │
 ├── scripts/                        # Scripts analíticos complementarios
-│   └── deseq2_analysis.R           # Script en R: normalización, VST, PCA, apeglm y Volcano plot
+│   ├── deseq2_analysis.R           # Script en R: normalización, VST, PCA, apeglm y Volcano plot
+│   └── download_and_subsample.sh   # Descarga de SRA y submuestreo a 1.000.000 de pares por muestra
 │
 ├── data/                           # Datos de entrada y metadatos del estudio
-│   ├── samplesheet.csv             # Manifiesto de muestras (sample_id, fastq_1, fastq_2, condition)
+│   ├── samplesheet.csv             # Manifiesto de muestras (rutas relativas a data/fastq/)
 │   ├── SRR_Acc_List.txt            # Identificadores de acceso SRA analizados (BioProject PRJNA1533324)
 │   └── SraRunTable.csv             # Metadatos experimentales descargados de NCBI SRA
 │
@@ -185,7 +183,8 @@ Pipeline-AWS-Nextflow/
 
 ### 1. Cuantificación y Cobertura Genómica
 - **Referencia genómica:** *Mus musculus* GRCm39 primary assembly (2.6 GB) con anotación de transcritos **GENCODE vM36** (1.1 GB).
-- **Alineamiento (HISAT2):** Las lecturas recortadas se mapearon de forma concordante con strandness invertido (`--rna-strandness RF`).
+- **Recorte (Trimmomatic):** sobrevivieron como pares entre el 78,7 % y el 95,5 % de las lecturas por muestra (la muestra `SRR40794932` es la de menor calidad).
+- **Alineamiento (HISAT2):** tasa global de alineamiento entre el **63,6 %** (`SRR40794932`) y el **88,7 %**, con strandness invertido (`--rna-strandness RF`).
 - **Asignación de lecturas (featureCounts):** Se evaluaron **78.239 genes**. Tras aplicar el filtro de conteo mínimo ($\ge 10$ lecturas acumuladas entre todas las réplicas) para eliminar ruido técnico estocástico, se retuvieron **13.668 genes informativos** para modelado estadístico.
 
 ### 2. Expresión Génica Diferencial (DESeq2)
@@ -197,6 +196,11 @@ El análisis implementado en [`scripts/deseq2_analysis.R`](file:///scripts/deseq
 - **Gráficos diagnósticos:**
   - **PCA:** Reducción de dimensionalidad sobre datos transformados mediante VST (*Variance Stabilizing Transformation*).
   - **Volcano plot:** Representación de significancia estadística frente a magnitud de cambio ($p_{\text{adj}} < 0.05$, $|\log_2\text{FC}| \ge 1.0$).
+
+### 3. Resultado e interpretación
+- Solo **3 genes** alcanzan $p_{\text{adj}} < 0.05$ (todos sobreexpresados, con $\log_2\text{FC}$ entre 0,55 y 0,89) y **ninguno** supera el umbral $|\log_2\text{FC}| \ge 1$, por lo que el volcano plot no muestra genes diferencialmente expresados.
+- Este resultado es esperable con el diseño utilizado: **1.000.000 de pares por muestra** (frente a las decenas de millones originales) y **n = 3 por grupo** reducen mucho la potencia estadística. Además, `SRR40794932` presenta una calidad y una tasa de alineamiento claramente inferiores.
+- El objetivo del proyecto es demostrar un **pipeline reproducible de extremo a extremo**; para conclusiones biológicas sobre miR-150-5p habría que repetir el análisis con la profundidad completa de secuenciación.
 
 ---
 
@@ -218,7 +222,20 @@ conda env create -f environment.yml
 conda activate rnaseq
 ```
 
-### 3. Ejecutar el pipeline
+### 3. Descargar y submuestrear las lecturas
+```bash
+bash scripts/download_and_subsample.sh   # genera data/fastq/SRR*_1.fastq.gz y SRR*_2.fastq.gz
+```
+
+### 4. Preparar el genoma de referencia (GRCm39, GENCODE vM36)
+```bash
+mkdir -p genome/hisat2_index
+wget -O - https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M36/GRCm39.primary_assembly.genome.fa.gz | gunzip > genome/genome.fa
+wget -O - https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M36/gencode.vM36.primary_assembly.annotation.gtf.gz | gunzip > genome/annotation.gtf
+hisat2-build -p 4 genome/genome.fa genome/hisat2_index/GRCm39   # requiere ~8 GB de RAM; puede tardar más de una hora
+```
+
+### 5. Ejecutar el pipeline
 ```bash
 nextflow run main.nf -profile local
 ```
@@ -230,7 +247,7 @@ nextflow run main.nf -profile local -resume
 
 ---
 
-## ☁️ Orquestación y Despliegue en AWS Cloud (AWS Batch + S3)
+## ☁️ Orquestación en AWS Cloud (AWS Batch + S3): perfil preparado
 
 > 💡 **Transparencia en infraestructura y costes:**  
 > **No es necesario crear una cuenta de AWS ni incurrir en costes de facturación.**  
@@ -272,7 +289,7 @@ profiles {
     aws {
         process.executor  = 'awsbatch'
         process.queue     = 'rnaseq-batch-queue'
-        process.container = 'quay.io/biocontainers/mulled-v2-...'
+        wave.enabled      = true   // construye los contenedores a partir de las directivas conda
 
         aws {
             region = 'us-east-1'

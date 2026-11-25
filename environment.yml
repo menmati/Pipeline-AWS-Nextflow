@@ -12,6 +12,7 @@ dependencies:
   - samtools=1.21
   - subread=2.0.6
   - seqtk=1.4
+  - sra-tools
   - r-base=4.4
   - bioconductor-deseq2=1.46.0
   - bioconductor-apeglm

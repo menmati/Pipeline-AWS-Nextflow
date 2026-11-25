@@ -13,6 +13,7 @@ process TRIMMOMATIC {
 
     input:
     tuple val(meta), path(reads)
+    path  adapters
 
     output:
     tuple val(meta), path("${meta.id}_R1_trimmed.fastq.gz"),
@@ -31,7 +32,7 @@ process TRIMMOMATIC {
         ${r1} ${r2} \
         ${meta.id}_R1_trimmed.fastq.gz  ${meta.id}_R1_unpaired.fastq.gz \
         ${meta.id}_R2_trimmed.fastq.gz  ${meta.id}_R2_unpaired.fastq.gz \
-        ILLUMINACLIP:${params.trimmomatic_adapters}:2:30:10:2:keepBothReads \
+        ILLUMINACLIP:${adapters}:2:30:10:2:keepBothReads \
         LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
         2> ${meta.id}_trimmomatic.log
 

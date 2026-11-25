@@ -62,7 +62,9 @@ workflow {
         .splitCsv(header: true)
         .map { row ->
             def meta = [id: row.sample, condition: row.condition]
-            [meta, [file(row.fastq_1), file(row.fastq_2)]]
+            // Relative paths in the samplesheet are resolved against the project directory
+            def resolve = { p -> (p.startsWith('/') || p.contains('://')) ? file(p) : file("${projectDir}/${p}") }
+            [meta, [resolve(row.fastq_1), resolve(row.fastq_2)]]
         }
         .set { reads_ch }
 
@@ -70,7 +72,7 @@ workflow {
     FASTQC_RAW(reads_ch)
 
     // 3. Adapter trimming
-    TRIMMOMATIC(reads_ch)
+    TRIMMOMATIC(reads_ch, file(params.trimmomatic_adapters))
 
     // 4. QC on trimmed reads
     FASTQC_TRIMMED(
