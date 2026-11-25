@@ -30,6 +30,11 @@ params.outdir               = "${projectDir}/results"
 params.contrast             = ["condition", "miR150_inhibition", "negative_control"]
 params.r_script             = "${projectDir}/scripts/deseq2_analysis.R"
 
+// Relative paths in the samplesheet are resolved against the project directory
+def resolveInput(String p) {
+    return (p.startsWith('/') || p.contains('://')) ? file(p) : file("${projectDir}/${p}")
+}
+
 // ── Workflow ─────────────────────────────────────────────
 workflow {
 
@@ -62,9 +67,7 @@ workflow {
         .splitCsv(header: true)
         .map { row ->
             def meta = [id: row.sample, condition: row.condition]
-            // Relative paths in the samplesheet are resolved against the project directory
-            def resolve = { p -> (p.startsWith('/') || p.contains('://')) ? file(p) : file("${projectDir}/${p}") }
-            [meta, [resolve(row.fastq_1), resolve(row.fastq_2)]]
+            [meta, [resolveInput(row.fastq_1), resolveInput(row.fastq_2)]]
         }
         .set { reads_ch }
 
