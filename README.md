@@ -167,7 +167,7 @@ Pipeline-AWS-Nextflow/
     │   ├── volcano_plot.pdf        # Gráfico de volcán (Log2 Fold Change vs -Log10 p-value)
     │   └── pca_plot.pdf            # Análisis de Componentes Principales con estabilización de varianza (VST)
     ├── featurecounts/
-    │   ├── counts.txt              # Matriz global de conteos crudos de todas las muestras (78.239 genes)
+    │   ├── counts.txt              # Matriz de conteos crudos (78.239 genes); se genera al ejecutar, no incluida en el repo
     │   └── counts.txt.summary      # Estadísticas de asignación de lecturas (tasa de asignación exónica vs intrónica/intergénica)
     ├── fastqc/                     # Reportes interactivos de calidad (HTML y ZIP) pre y post-procesamiento
     ├── hisat2/                     # Logs de alineamiento con porcentajes de mapeo concordante único

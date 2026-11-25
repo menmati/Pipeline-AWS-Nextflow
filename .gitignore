@@ -19,6 +19,10 @@ results/hisat2/*/*.bam
 results/hisat2/*/*.bai
 results/trimmomatic/*/*.fastq.gz
 
+# Resultados intermedios pesados (se regeneran al ejecutar el pipeline)
+results/fastqc/*/*.zip
+results/featurecounts/counts.txt
+
 # Archivos de Word / temporales de Office
 ~$*.docx
 
