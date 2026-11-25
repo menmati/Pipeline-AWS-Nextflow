@@ -188,7 +188,7 @@ Pipeline-AWS-Nextflow/
 - **Asignación de lecturas (featureCounts):** Se evaluaron **78.239 genes**. Tras aplicar el filtro de conteo mínimo ($\ge 10$ lecturas acumuladas entre todas las réplicas) para eliminar ruido técnico estocástico, se retuvieron **13.668 genes informativos** para modelado estadístico.
 
 ### 2. Expresión Génica Diferencial (DESeq2)
-El análisis implementado en [`scripts/deseq2_analysis.R`](file:///scripts/deseq2_analysis.R) ejecutó:
+El análisis implementado en [`scripts/deseq2_analysis.R`](scripts/deseq2_analysis.R) ejecutó:
 - **Normalización:** Estimación de factores de escala por el método de la mediana de las razones (*median-of-ratios*).
 - **Modelado:** Estimación de la dispersión de conteos bajo el modelo lineal generalizado con distribución Binomial Negativa:
   $$K_{ij} \sim \text{NB}(\mu_{ij}, \alpha_i)$$
@@ -280,7 +280,7 @@ Cuando los volúmenes de datos crecen a cientos de gigabytes o terabytes, Nextfl
              └─────────────────┘
 ```
 
-### Parametrización en [`nextflow.config`](file:///nextflow.config)
+### Parametrización en [`nextflow.config`](nextflow.config)
 
 El perfil `aws` desacopla los endpoints locales y los enlaza a servicios gestionados en la nube:
 
